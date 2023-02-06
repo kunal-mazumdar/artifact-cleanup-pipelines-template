@@ -48,7 +48,7 @@ pipelines:
         - name: artifact_cleanup_cron_trigger
       {{ end }}
       outputResources:
-        - name: artifact_cleanup_property_bag_1
+        - name: {{ .Values.metadata.propertyBagResourceName }}
 
     steps:
       - name: delete_artifacts
