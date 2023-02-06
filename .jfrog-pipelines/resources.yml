@@ -1,5 +1,5 @@
 resources:
-  - name: {{ .Values.propertyBagResourceName }}
+  - name: {{ .Values.metadata.propertyBagResourceName }}
     type: PropertyBag
     configuration:
       artifactsCount: 0
