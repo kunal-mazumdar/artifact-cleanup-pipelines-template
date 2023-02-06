@@ -1,5 +1,5 @@
 resources:
-  - name: artifact_cleanup_property_bag
+  - name: {{ .Values.propertyBagResourceName }}
     type: PropertyBag
     configuration:
       artifactsCount: 0

@@ -48,7 +48,7 @@ pipelines:
         - name: artifact_cleanup_cron_trigger
       {{ end }}
       outputResources:
-        - name: artifact_cleanup_property_bag
+        - name: {{ .Values.propertyBagResourceName }}
 
     steps:
       - name: delete_artifacts
@@ -148,8 +148,8 @@ pipelines:
                     sleep $((paceTimeMS/1000))
                   done </tmp/actionable_artifact_paths.txt
                   
-                  write_output artifact_cleanup_property_bag artifactsCount="${artifactsCount}"
-                  write_output artifact_cleanup_property_bag runNumber=${run_number}
+                  write_output {{ .Values.propertyBagResourceName }} artifactsCount="${artifactsCount}"
+                  write_output {{ .Values.propertyBagResourceName }} runNumber=${run_number}
                 fi
               }
               cleanup
