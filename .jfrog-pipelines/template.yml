@@ -1,7 +1,7 @@
 valuesFilePath: values.yml
 
 resources:
-  - name: {{ .Values.metadata.propertyBagResourceName }}
+  - name: {{ default "artifact_cleanup_property_bag" .Values.metadata.propertyBagResourceName }}
     type: PropertyBag
     configuration:
       artifactsCount: 0

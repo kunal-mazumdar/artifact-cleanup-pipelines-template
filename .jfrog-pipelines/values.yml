@@ -1,6 +1,6 @@
 metadata:
   pipelineName: km_test_artifact_cleanup
-  propertyBagResourceName: artifact_cleanup_property_bag_1
+  # propertyBagResourceName: artifact_cleanup_property_bag_1
 
 input:
   jfrogTokenIntegration: jf_token
