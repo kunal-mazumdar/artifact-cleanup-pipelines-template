@@ -1,0 +1,11 @@
+metadata:
+  pipelineName: km_test_artifact_cleanup
+
+input:
+  jfrogTokenIntegration: jf_token
+
+controls:
+  cron:
+    enabled: false
+    expression: 0 0 5 ? * 1
+    branch: master

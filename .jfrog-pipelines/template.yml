@@ -1,0 +1,160 @@
+valuesFilePath: values.yml
+
+pipelines:
+  - name: {{ .Values.metadata.pipelineName }}
+    configuration:
+      runtime:
+        type: image
+        image:
+          auto:
+            language: 'node'
+            versions:
+              - "16"
+      jfrogCliVersion: "2"
+      integrations:
+        - name: {{ .Values.input.jfrogTokenIntegration }}
+      environmentVariables:
+        readOnly:
+          timeUnit:
+            values: ["year", "month", "day", "hour", "minute"]
+            default: "month"
+            description: The unit of the time interval. year, month, day, hour or minute are allowed values. Default month.
+          timeInterval:
+            default: 1
+            description: The time interval to look back before deleting an artifact. Default 1.
+          searchOn:
+            values: ["last_downloaded", "created"]
+            default: "last_downloaded"
+            description: Parameter to choose the search condition. Defaults to search artifacts last downloaded before selected time.
+          repos:
+            default: ""
+            description: A list of repositories to clean. This parameter is required.
+          dryRun:
+            default: "true"
+            values: ["true", "false"]
+            description: If this parameter is passed, artifacts will not actually be deleted. Default false.
+          paceTimeMS:
+            default: 1000
+            description: The number of milliseconds to delay between delete operations. Default 0.
+          maxRepos:
+            default: 10
+            description: Maximum allowed repos to search
+          maxArtifacts:
+            default: 50
+            description: Maximum allowed artifacts to be deleted
+      
+      {{ if eq "true" "{{ .Values.controls.cron.enabled }}" }}
+      inputResources:
+        - name: artifact_cleanup_cron_trigger
+      {{ end }}
+      outputResources:
+        - name: artifact_cleanup_property_bag
+
+    steps:
+      - name: delete_artifacts
+        type: Bash
+        execution:
+          onStart:
+            - |
+              function validate_repos() {
+                echo '===== VALIDATING INPUT REPOS ====='
+                if [[ -z "${repos}" ]]; then
+                  echo "Please provide at least one repo to proceed!"
+                  exit 1
+                fi
+              }
+              validate_repos
+            - |
+              function validate_time_interval() {
+                echo '===== VALIDATING INPUT TIME INTERVAL ====='
+                if [ "$timeInterval" -le 0 ]; then
+                  echo "timeInterval variable must have value 1 or more"
+                  exit 1
+                fi
+              }
+              validate_time_interval
+            - |
+              function validate_pace_time() {
+                echo '===== VALIDATING INPUT PACE TIME ====='
+                if [ "$paceTimeMS" -lt 1000 ]; then
+                  echo "paceTimeMS variable must have value 1000 or more"
+                  exit 1
+                fi
+              }
+              validate_pace_time
+            - |
+              function validate_max_repos() {
+                echo '===== VALIDATING INPUT MAX REPOS ====='
+                if [ "$maxRepos" -le 0 ]; then
+                  echo "maxRepos variable must have value 1 or more"
+                  exit 1
+                fi
+              }
+              validate_max_repos
+            - |
+              function validate_max_artifacts() {
+                echo '===== VALIDATING INPUT MAX ARTIFACTS ====='
+                if [ "$maxArtifacts" -le 0 ]; then
+                  echo "maxArtifacts variable must have value 1 or more"
+                  exit 1
+                fi
+              }
+              validate_max_artifacts
+            - |
+              function configure_artifactory() {
+                echo '===== CONFIGURING ARTIFACTORY ====='
+                jf c add --artifactory-url ${int_{{ .Values.input.jfrogTokenIntegration }}_url} --access-token ${int_{{ .Values.input.jfrogTokenIntegration }}_accessToken}
+                isArtifactoryOnline=$(jf rt ping)                
+                if [[ $isArtifactoryOnline != 'OK' ]]; then
+                  echo "Please check access token!"
+                  exit 1
+                fi
+              }
+              configure_artifactory
+          onExecute:
+            - |
+              function search() {                
+                echo '{"files":[{"aql":{"items.find":{"type":"file","stat.downloaded":{"$lt":"${threshold_timestamp}"}}},"sortBy":["stat.downloaded","created"],"sortOrder":"asc"}]}' > plugin_search_template.aql
+                echo 'const fs=require("fs");const ts=(new Date).getTime();const ti=parseInt(process.argv[3]);const tu=process.argv[4];const tuMins={year:12*30*24*60,month:30*24*60,day:24*60,hour:60,minute:1};const tt=`${ts-ti*tuMins[tu]*60*1e3}`;const aql=fs.readFileSync("plugin_search_template.aql",{encoding:"utf8"});const maxRepos=parseInt(process.argv[5]||0);const repos=process.argv[2];const rq=repos.split(",").splice(0,maxRepos).map(repo=>{return{repo:repo}});const st=process.argv[6];const aqlO=JSON.parse(aql);aqlO.files[0].aql["items.find"]["$or"]=rq;if(st==="created"){delete aqlO.files[0].aql["items.find"]["stat.downloaded"];aqlO.files[0].aql["items.find"]["created"]={$lt:"${threshold_timestamp}"}}fs.writeFileSync("plugin_search.aql",JSON.stringify(aqlO,null,1).replace("${threshold_timestamp}",tt));' > prepare_aql.js
+                node prepare_aql.js ${repos} ${timeInterval} ${timeUnit} ${maxRepos} ${searchOn}                
+                echo "===== Fetching artifacts not downloaded since ${timeInterval} ${timeUnit} from now ====="
+                echo "Aql:"
+                cat plugin_search.aql
+                actionable_artifacts=$(jf rt s --spec=plugin_search.aql --limit ${maxArtifacts})
+                if [[ -z "${actionable_artifacts}" ]]; then
+                  echo "No matching artifacts found for cleanup!"
+                  exit 1
+                else
+                  echo '===== Following artifacts found for cleanup ====='
+                  echo ${actionable_artifacts} | jq -r '.[].path' > /tmp/actionable_artifact_paths.txt
+                  cat /tmp/actionable_artifact_paths.txt
+                fi
+              }
+              search
+            - |              
+              function cleanup() {
+                if [[ ${dryRun} == 'true' ]]; then                
+                  echo '==== Artifact cleanup skipped in dry run mode. To delete the artifacts, please run the pipeline with dryRun set to false ===='
+                else
+                  echo "===== Initiating cleanup with delay of ${paceTimeMS}ms between each artifact ====="
+                  echo "artifact_repo_path, deleted_at_timestamp, deleted_at" >> report.csv
+                  
+                  artifactsCount=0
+                  while read path; do
+                    artifactsCount=$((artifactsCount+1))
+                    echo "[Deleting Artifact] ${path}"
+                    jf rt del "${path}"
+                    echo "${path}, `date +%s`, `date`" >> report.csv
+                    sleep $((paceTimeMS/1000))
+                  done </tmp/actionable_artifact_paths.txt
+                  
+                  write_output artifact_cleanup_property_bag artifactsCount="${artifactsCount}"
+                  write_output artifact_cleanup_property_bag runNumber=${run_number}
+                fi
+              }
+              cleanup
+          onComplete:
+            - |
+              if test -f "./report.csv"; then
+                add_cache_files report.csv report.csv
+              fi
