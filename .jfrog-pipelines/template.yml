@@ -1,7 +1,10 @@
 valuesFilePath: values.yml
 
+__globals:
+    propertyBagResourceName: &propertyBagResourceName '{{ default "artifact_cleanup_property_bag" .Values.metadata.propertyBagResourceName }}'
+
 resources:
-  - name: {{ default "artifact_cleanup_property_bag" .Values.metadata.propertyBagResourceName }}
+  - name: *propertyBagResourceName
     type: PropertyBag
     configuration:
       artifactsCount: 0
@@ -65,7 +68,7 @@ pipelines:
         - name: artifact_cleanup_cron_trigger
       {{ end }}
       outputResources:
-        - name: {{ .Values.metadata.propertyBagResourceName }}
+        - name: *propertyBagResourceName
 
     steps:
       - name: delete_artifacts
