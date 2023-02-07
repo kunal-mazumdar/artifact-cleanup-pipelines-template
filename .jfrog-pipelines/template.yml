@@ -49,7 +49,7 @@ pipelines:
             default: '{{ .Values.controls.repos }}'
             description: A list of repositories to clean. This parameter is required.
           dryRun:
-            default: '{{ default "true" .Values.controls.repos }}'
+            default: '{{ default "true" .Values.controls.dryRun }}'
             values: ['true', 'false']
             description: If this parameter is passed, artifacts will not actually be deleted. Default false.
           paceTimeMS:
