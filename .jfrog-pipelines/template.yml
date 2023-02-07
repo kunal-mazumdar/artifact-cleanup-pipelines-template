@@ -63,7 +63,7 @@ pipelines:
             default: {{ default 100 .Values.controls.maxArtifacts }}
             description: Maximum allowed artifacts to be deleted
       
-      {{ if eq "true" "{{ .Values.controls.cron.enabled }}" }}
+      {{ if eq true .Values.controls.cron.enabled }}
       inputResources:
         - name: *cronTriggerResourceName
       {{ end }}
