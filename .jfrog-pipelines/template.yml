@@ -39,22 +39,22 @@ pipelines:
       environmentVariables:
         readOnly:
           timeUnit:
-            values: ["year", "month", "day", "hour", "minute"]
-            default: "month"
+            values: ['year', 'month', 'day', 'hour', 'minute']
+            default: 'month'
             description: The unit of the time interval. year, month, day, hour or minute are allowed values. Default month.
           timeInterval:
             default: 1
             description: The time interval to look back before deleting an artifact. Default 1.
           searchOn:
-            values: ["last_downloaded", "created"]
-            default: "last_downloaded"
+            values: ['last_downloaded', 'created']
+            default: 'last_downloaded'
             description: Parameter to choose the search condition. Defaults to search artifacts last downloaded before selected time.
           repos:
-            default: {{ .Values.controls.repos }}
+            default: '{{ .Values.controls.repos }}'
             description: A list of repositories to clean. This parameter is required.
           dryRun:
-            default: {{ default "true" .Values.controls.repos }}
-            values: ["true", "false"]
+            default: '{{ default "true" .Values.controls.repos }}'
+            values: ['true', 'false']
             description: If this parameter is passed, artifacts will not actually be deleted. Default false.
           paceTimeMS:
             default: {{ default 1000 .Values.controls.paceTimeMS }}
