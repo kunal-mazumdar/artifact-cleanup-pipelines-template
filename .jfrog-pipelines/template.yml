@@ -2,6 +2,7 @@ valuesFilePath: values.yml
 
 __globals:
     propertyBagResourceName: &propertyBagResourceName '{{ default "artifact_cleanup_property_bag" .Values.metadata.propertyBagResourceName }}'
+    cronTriggerResourceName: &cronTriggerResourceName '{{ default "artifact_cleanup_cron_trigger" .Values.metadata.cronTriggerResourceName }}'
 
 resources:
   - name: *propertyBagResourceName
@@ -12,12 +13,14 @@ resources:
 
 {{ if eq "true" "{{ .Values.controls.cron.enabled }}" }}
 # The cron time when the job is executed. Default 0 0 5 ? * 1 should be redefined.
-  - name: artifact_cleanup_cron_trigger
+  - name: *cronTriggerResourceName
     type: CronTrigger
     configuration:
-      interval: "{{ .Values.controls.cron.expression }}"
+      interval: "{{ default "0 0 5 ? * 1" .Values.controls.cron.expression }}"      
+      {{ if "{{ .Values.controls.cron.branch }}" }}
       branches:
         include: "^{{ .Values.controls.cron.branch }}$"
+      {{ end }}
 {{ end }}
 
 pipelines:
@@ -47,25 +50,25 @@ pipelines:
             default: "last_downloaded"
             description: Parameter to choose the search condition. Defaults to search artifacts last downloaded before selected time.
           repos:
-            default: ""
+            default: {{ .Values.controls.repos }}
             description: A list of repositories to clean. This parameter is required.
           dryRun:
-            default: "true"
+            default: {{ default "true" .Values.controls.repos }}
             values: ["true", "false"]
             description: If this parameter is passed, artifacts will not actually be deleted. Default false.
           paceTimeMS:
-            default: 1000
+            default: {{ default 1000 .Values.controls.paceTimeMS }}
             description: The number of milliseconds to delay between delete operations. Default 0.
           maxRepos:
-            default: 10
+            default: {{ default 10 .Values.controls.maxRepos }}
             description: Maximum allowed repos to search
           maxArtifacts:
-            default: 50
+            default: {{ default 100 .Values.controls.maxArtifacts }}
             description: Maximum allowed artifacts to be deleted
       
       {{ if eq "true" "{{ .Values.controls.cron.enabled }}" }}
       inputResources:
-        - name: artifact_cleanup_cron_trigger
+        - name: *cronTriggerResourceName
       {{ end }}
       outputResources:
         - name: *propertyBagResourceName

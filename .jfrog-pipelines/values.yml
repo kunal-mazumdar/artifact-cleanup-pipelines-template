@@ -1,12 +1,35 @@
 metadata:
+  # [Required]
   pipelineName: km_test_artifact_cleanup
-  # propertyBagResourceName: artifact_cleanup_property_bag_1
+
+  # [Optional] Default value: artifact_cleanup_property_bag
+  propertyBagResourceName: artifact_cleanup_property_bag
+
+  # [Optional] Default value: artifact_cleanup_cron_trigger
+  cronTriggerResourceName: artifact_cleanup_cron_trigger
 
 input:
+  # [Required]
   jfrogTokenIntegration: jf_token
 
 controls:
+  # [Optional] When defined with enabled: true then new Cron will be setup
   cron:
     enabled: false
-    expression: 0 0 5 ? * 1
+    expression: "0 0 5 ? * 1"
     branch: master
+
+  # [Optional] List of comma separated Artifactory repo names for which jfrogTokenIntegration is provided
+  repos: ""
+
+  # [Optional] Defaults to true, if not provided
+  dryRun: true
+
+  # [Optional] Defaults to 1000, if not provided
+  paceTimeMS: 1000
+
+  # [Optional] Defaults to 10, if not provided
+  maxRepos: 10
+
+  # [Optional] Defaults to 10, if not provided
+  maxArtifacts: 100
