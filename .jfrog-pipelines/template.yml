@@ -10,7 +10,6 @@ resources:
     configuration:
       artifactsCount: 0
       runNumber: 0
-      cronEnabled: '{{ .Values.controls.cron.enabled }}'
 
 {{ if eq true .Values.controls.cron.enabled }}
 # The cron time when the job is executed. Default 0 0 5 ? * 1 should be redefined.
