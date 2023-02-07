@@ -10,8 +10,9 @@ resources:
     configuration:
       artifactsCount: 0
       runNumber: 0
+      cronEnabled: '{{ .Values.controls.cron.enabled }}'
 
-{{ if eq true "{{ .Values.controls.cron.enabled }}" }}
+{{ if eq true .Values.controls.cron.enabled }}
 # The cron time when the job is executed. Default 0 0 5 ? * 1 should be redefined.
   - name: *cronTriggerResourceName
     type: CronTrigger
@@ -28,8 +29,8 @@ pipelines:
           auto:
             language: 'node'
             versions:
-              - "16"
-      jfrogCliVersion: "2"
+              - '16'
+      jfrogCliVersion: '2'
       integrations:
         - name: {{ .Values.input.jfrogTokenIntegration }}
       environmentVariables:
