@@ -89,8 +89,6 @@ pipelines:
                   exit 1
                 fi
               }
-              validate_repos
-            - |
               function validate_time_interval() {
                 echo '===== VALIDATING INPUT TIME INTERVAL ====='
                 if [ "${timeInterval}" -le 0 ]; then
@@ -98,8 +96,6 @@ pipelines:
                   exit 1
                 fi
               }
-              validate_time_interval
-            - |
               function validate_pace_time() {
                 echo '===== VALIDATING INPUT PACE TIME ====='
                 if [ "${paceTimeMS}" -lt 1000 ]; then
@@ -107,8 +103,6 @@ pipelines:
                   exit 1
                 fi
               }
-              validate_pace_time
-            - |
               function validate_max_repos() {
                 echo '===== VALIDATING INPUT MAX REPOS ====='
                 if [ "${maxRepos}" -le 0 ]; then
@@ -116,8 +110,6 @@ pipelines:
                   exit 1
                 fi
               }
-              validate_max_repos
-            - |
               function validate_max_artifacts() {
                 echo '===== VALIDATING INPUT MAX ARTIFACTS ====='
                 if [ "${maxArtifacts}" -le 0 ]; then
@@ -125,8 +117,6 @@ pipelines:
                   exit 1
                 fi
               }
-              validate_max_artifacts
-            - |
               function configure_artifactory() {
                 echo '===== CONFIGURING ARTIFACTORY ====='
                 jf c add --artifactory-url ${int_{{ .Values.input.jfrogTokenIntegration }}_url} --access-token ${int_{{ .Values.input.jfrogTokenIntegration }}_accessToken}
@@ -136,7 +126,12 @@ pipelines:
                   exit 1
                 fi
               }
-              configure_artifactory
+            - validate_repos
+            - validate_time_interval
+            - validate_pace_time
+            - validate_max_repos
+            - validate_max_artifacts
+            - configure_artifactory
           onExecute:
             - |
               function search() {                
