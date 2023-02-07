@@ -73,13 +73,16 @@ pipelines:
     steps:
       - name: delete_artifacts
         type: Bash
+        configuration:
+          environmentVariables:
+            INTERNAL_PROPERTY_BAG_RESOURCE_NAME: *propertyBagResourceName
         execution:
           onStart:
             - |
               function validate_repos() {
                 echo '===== VALIDATING INPUT REPOS ====='
                 if [[ -z "${repos}" ]]; then
-                  echo "Please provide at least one repo to proceed!"
+                  echo 'Please provide at least one repo to proceed!'
                   exit 1
                 fi
               }
@@ -87,8 +90,8 @@ pipelines:
             - |
               function validate_time_interval() {
                 echo '===== VALIDATING INPUT TIME INTERVAL ====='
-                if [ "$timeInterval" -le 0 ]; then
-                  echo "timeInterval variable must have value 1 or more"
+                if [ "${timeInterval}" -le 0 ]; then
+                  echo 'timeInterval variable must have value 1 or more'
                   exit 1
                 fi
               }
@@ -96,8 +99,8 @@ pipelines:
             - |
               function validate_pace_time() {
                 echo '===== VALIDATING INPUT PACE TIME ====='
-                if [ "$paceTimeMS" -lt 1000 ]; then
-                  echo "paceTimeMS variable must have value 1000 or more"
+                if [ "${paceTimeMS}" -lt 1000 ]; then
+                  echo 'paceTimeMS variable must have value 1000 or more'
                   exit 1
                 fi
               }
@@ -105,8 +108,8 @@ pipelines:
             - |
               function validate_max_repos() {
                 echo '===== VALIDATING INPUT MAX REPOS ====='
-                if [ "$maxRepos" -le 0 ]; then
-                  echo "maxRepos variable must have value 1 or more"
+                if [ "${maxRepos}" -le 0 ]; then
+                  echo 'maxRepos variable must have value 1 or more'
                   exit 1
                 fi
               }
@@ -114,8 +117,8 @@ pipelines:
             - |
               function validate_max_artifacts() {
                 echo '===== VALIDATING INPUT MAX ARTIFACTS ====='
-                if [ "$maxArtifacts" -le 0 ]; then
-                  echo "maxArtifacts variable must have value 1 or more"
+                if [ "${maxArtifacts}" -le 0 ]; then
+                  echo 'maxArtifacts variable must have value 1 or more'
                   exit 1
                 fi
               }
@@ -126,7 +129,7 @@ pipelines:
                 jf c add --artifactory-url ${int_{{ .Values.input.jfrogTokenIntegration }}_url} --access-token ${int_{{ .Values.input.jfrogTokenIntegration }}_accessToken}
                 isArtifactoryOnline=$(jf rt ping)                
                 if [[ $isArtifactoryOnline != 'OK' ]]; then
-                  echo "Please check access token!"
+                  echo 'Please check access token!'
                   exit 1
                 fi
               }
@@ -168,8 +171,8 @@ pipelines:
                     sleep $((paceTimeMS/1000))
                   done </tmp/actionable_artifact_paths.txt
                   
-                  write_output {{ .Values.metadata.propertyBagResourceName }} artifactsCount="${artifactsCount}"
-                  write_output {{ .Values.metadata.propertyBagResourceName }} runNumber=${run_number}
+                  write_output ${INTERNAL_PROPERTY_BAG_RESOURCE_NAME} artifactsCount="${artifactsCount}"
+                  write_output ${INTERNAL_PROPERTY_BAG_RESOURCE_NAME} runNumber=${run_number}
                 fi
               }
               cleanup
