@@ -13,14 +13,14 @@ input:
   jfrogTokenIntegration: jf_token
 
 controls:
-  # [Optional] When defined with enabled: true then new Cron will be setup
+  # [Optional] When defined with enabled: true then new Cron will be setup. Default expression: 0 0 5 ? * 1
   cron:
     enabled: false
-    expression: "0 0 5 ? * 1"
-    branch: master
+    expression: "*/3 * * * *"
 
-  # [Optional] List of comma separated Artifactory repo names for which jfrogTokenIntegration is provided
-  repos: ""
+  # [Optional] List of comma separated Artifactory repo names for which jfrogTokenIntegration is provided.
+  # Useful when using the pipeline with Cron.
+  repos: "plugin-repo-1"
 
   # [Optional] Defaults to true, if not provided
   dryRun: true

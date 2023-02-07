@@ -16,11 +16,7 @@ resources:
   - name: *cronTriggerResourceName
     type: CronTrigger
     configuration:
-      interval: "{{ default "0 0 5 ? * 1" .Values.controls.cron.expression }}"      
-      {{ if "{{ .Values.controls.cron.branch }}" }}
-      branches:
-        include: "^{{ .Values.controls.cron.branch }}$"
-      {{ end }}
+      interval: "{{ default "0 0 5 ? * 1" .Values.controls.cron.expression }}"
 {{ end }}
 
 pipelines:
@@ -150,9 +146,7 @@ pipelines:
                   echo ${actionable_artifacts} | jq -r '.[].path' > /tmp/actionable_artifact_paths.txt
                   cat /tmp/actionable_artifact_paths.txt
                 fi
-              }
-              search
-            - |              
+              }           
               function cleanup() {
                 if [[ ${dryRun} == 'true' ]]; then                
                   echo '==== Artifact cleanup skipped in dry run mode. To delete the artifacts, please run the pipeline with dryRun set to false ===='
@@ -173,7 +167,8 @@ pipelines:
                   write_output ${INTERNAL_PROPERTY_BAG_RESOURCE_NAME} runNumber=${run_number}
                 fi
               }
-              cleanup
+            - search
+            - cleanup
           onComplete:
             - |
               if test -f "./report.csv"; then
