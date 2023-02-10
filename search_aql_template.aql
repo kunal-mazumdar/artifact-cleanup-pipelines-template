@@ -1,0 +1,23 @@
+{
+  "files": [
+    {
+      "aql": {
+        "items.find": {
+          "type": "file",
+          "repo": "plugin-repo-1",
+          "stat.downloaded": {
+            "$lt": "1676024188538"
+          },
+          "@cleanup.skip": {
+            "$ne": "*"
+          }
+        }
+      },
+      "sortBy": [
+        "stat.downloaded",
+        "created"
+      ],
+      "sortOrder": "asc"
+    }
+  ]
+}
