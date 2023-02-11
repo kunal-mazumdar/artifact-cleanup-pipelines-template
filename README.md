@@ -52,8 +52,14 @@ searchOn:
 - description: Maximum allowed artifacts to be deleted. Default override allowed from values.yml.
 
 
-Executing
+Execution
 ---------
+
+**Manual Trigger Option**
+
+![Trigger Cleanup Pipeline](./trigger_run.png)
+
+**Scheduled Trigger**
 
 
 Operation
