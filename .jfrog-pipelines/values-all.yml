@@ -59,7 +59,7 @@ dockerCleanup:
     repos: "km-docker-local"
 
     # [Optional] Defaults to true, if not provided
-    dryRun: true
+    dryRun: false
 
     # [Optional] Defaults to 1000, if not provided
     paceTimeMS: 1000
