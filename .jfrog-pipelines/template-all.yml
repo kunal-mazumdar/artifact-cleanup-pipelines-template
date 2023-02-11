@@ -276,7 +276,7 @@ pipelines:
         readOnly:
           timeUnit:
             values: [ 'year', 'month', 'day', 'hour', 'minute' ]
-            default: 'month'
+            default: 'minute'
             description: The unit of the time interval. year, month, day, hour or minute are allowed values. Default month.
           timeInterval:
             default: 1
