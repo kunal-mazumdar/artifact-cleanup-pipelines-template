@@ -1,0 +1,23 @@
+{
+  "files": [
+    {
+      "aql": {
+        "items.find": {
+          "type": "file",
+          "name": "manifest.json",
+          "@artifactory.content-type": {
+            "$match": "*docker.distribution.manifest*"
+          },
+          "created": {
+            "$lt": "1676108149001"
+          }
+        }
+      },
+      "sortBy": [
+        "stat.downloaded",
+        "created"
+      ],
+      "sortOrder": "asc"
+    }
+  ]
+}

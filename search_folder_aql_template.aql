@@ -1,0 +1,12 @@
+{
+  "files": [
+    {
+      "aql": {
+        "items.find": {
+          "type": "folder",
+          "repo": "km-docker-local"
+        }
+      }
+    }
+  ]
+}
