@@ -56,7 +56,7 @@ dockerCleanup:
 
     # [Optional] List of comma separated Artifactory Docker repo names for which jfrogTokenIntegration is provided.
     # Useful when using the pipeline with Cron.
-    repos: "km-docker-virtual"
+    repos: "km-docker-local"
 
     # [Optional] Defaults to true, if not provided
     dryRun: true
