@@ -1,4 +1,4 @@
-valuesFilePath: values.yml
+valuesFilePath: values-all.yml
 
 __globals:
     artifactCleanupPropertyBagName: &artifactCleanupPropertyBagName '{{ default "artifact_cleanup_property_bag" .Values.artifactCleanup.metadata.propertyBagResourceName }}'
