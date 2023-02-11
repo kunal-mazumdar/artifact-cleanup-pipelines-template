@@ -254,7 +254,11 @@ pipelines:
               }
             - search
             - cleanup
-          <<: *onComplete
+          onComplete:
+            - |
+              if test -f "./report.csv"; then
+                add_cache_files report.csv report.csv
+              fi
 
   - name: {{ .Values.dockerCleanup.metadata.pipelineName }}
     configuration:
@@ -406,4 +410,8 @@ pipelines:
               }
             - search
             - cleanup
-          <<: *onComplete
+          onComplete:
+            - |
+              if test -f "./report.csv"; then
+                add_cache_files report.csv report.csv
+              fi
