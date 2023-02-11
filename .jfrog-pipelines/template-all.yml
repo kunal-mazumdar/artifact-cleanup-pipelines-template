@@ -106,7 +106,17 @@ resources:
 
 pipelines:
   - name: {{ .Values.artifactCleanup.metadata.pipelineName }}
-    *configuration:
+    configuration:
+      runtime:
+        type: image
+        image:
+          auto:
+            language: 'node'
+            versions:
+              - '16'
+      jfrogCliVersion: '2'
+      integrations:
+        - name: {{ .Values.shared.input.jfrogTokenIntegration }}
       environmentVariables:
         readOnly:
           timeUnit:
@@ -196,7 +206,17 @@ pipelines:
           <<: *onComplete
 
   - name: {{ .Values.dockerCleanup.metadata.pipelineName }}
-    *configuration:
+    configuration:
+      runtime:
+        type: image
+        image:
+          auto:
+            language: 'node'
+            versions:
+              - '16'
+      jfrogCliVersion: '2'
+      integrations:
+        - name: {{ .Values.shared.input.jfrogTokenIntegration }}
       environmentVariables:
         readOnly:
           timeUnit:
