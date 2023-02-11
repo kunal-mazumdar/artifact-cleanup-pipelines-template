@@ -25,7 +25,7 @@ artifactCleanup:
     repos: "plugin-repo-1"
 
     # [Optional] Defaults to true, if not provided
-    dryRun: true
+    dryRun: "true"
 
     # [Optional] Defaults to 1000, if not provided
     paceTimeMS: 1000
@@ -59,7 +59,7 @@ dockerCleanup:
     repos: "km-docker-local"
 
     # [Optional] Defaults to true, if not provided
-    dryRun: false
+    dryRun: "false"
 
     # [Optional] Defaults to 1000, if not provided
     paceTimeMS: 1000
