@@ -283,7 +283,7 @@ pipelines:
             description: The time interval to look back before deleting an artifact. Default 1.
           searchOn:
             values: [ 'last_downloaded', 'created' ]
-            default: 'last_downloaded'
+            default: 'created'
             description: Parameter to choose the search condition. Defaults to search artifacts last downloaded before selected time.
           repos:
             default: '{{ .Values.dockerCleanup.controls.repos }}'
@@ -397,7 +397,7 @@ pipelines:
                   artifactsCount=0
                   while read path; do
                     artifactsCount=$((artifactsCount+1))
-                    dockerRepoPath=$(echo "${path/manifest.json/""}")
+                    dockerRepoPath=$(echo "${path/\/manifest.json/""}")
                     echo "[Deleting Artifact] ${dockerRepoPath}"
                     jf rt del "${dockerRepoPath}"
                     echo "${dockerRepoPath}, `date +%s`, `date`" >> report.csv
