@@ -6,7 +6,7 @@ shared:
 artifactCleanup:
   metadata:
     # [Required]
-    pipelineName: km_test_artifact_cleanup
+    pipelineName: artifact_cleanup
 
     # [Optional] Default value: artifact_cleanup_property_bag
     propertyBagResourceName: artifact_cleanup_property_bag
@@ -40,7 +40,7 @@ artifactCleanup:
 dockerCleanup:
   metadata:
     # [Required]
-    pipelineName: km_test_docker_cleanup
+    pipelineName: docker_artifact_cleanup
 
     # [Optional] Default value: docker_cleanup_property_bag
     propertyBagResourceName: docker_cleanup_property_bag
