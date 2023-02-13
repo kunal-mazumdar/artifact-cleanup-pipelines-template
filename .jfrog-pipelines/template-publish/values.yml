@@ -1,0 +1,13 @@
+templateRepository:
+  gitProvider: myGitIntegration
+  path: "kunal-mazumdar/artifact-cleanup-pipelines-template"
+  branch: master
+  templateFolder: templates/artifactory/cleanup/artifact-cleanup
+
+publishTemplate:
+  namespace: myCompany
+  name: artifactCleanup
+  version: 1.0.0
+  pipelineName: publish_artifact_cleanup_template
+  artifactoryIntegration: myArtIntegration
+  jfrogAccessTokenIntegration: myAccessTokenIntegration

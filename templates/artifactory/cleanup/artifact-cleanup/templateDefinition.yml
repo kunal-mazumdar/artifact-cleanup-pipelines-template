@@ -1,5 +1,3 @@
-valuesFilePath: values-all.yml
-
 __globals:
     artifactCleanupPropertyBagName: &artifactCleanupPropertyBagName '{{ default "artifact_cleanup_property_bag" .Values.artifactCleanup.metadata.propertyBagResourceName }}'
     artifactCleanupCronTriggerName: &artifactCleanupCronTriggerName '{{ default "artifact_cleanup_cron_trigger" .Values.artifactCleanup.metadata.cronTriggerResourceName }}'
@@ -89,15 +87,13 @@ resources:
       runNumber: 0
 
 {{ if eq true .Values.artifactCleanup.controls.cron.enabled }}
-# The cron time when the job is executed. Default 0 0 5 ? * 1 should be redefined.
   - name: *artifactCleanupCronTriggerName
     type: CronTrigger
     configuration:
       interval: "{{ default "0 0 5 ? * 1" .Values.artifactCleanup.controls.cron.expression }}"
 {{ end }}
 
-{{ if eq true .Values.artifactCleanup.controls.cron.enabled }}
-# The cron time when the job is executed. Default 0 0 5 ? * 1 should be redefined.
+{{ if eq true .Values.dockerCleanup.controls.cron.enabled }}
 - name: *dockerCleanupCronTriggerName
   type: CronTrigger
   configuration:

@@ -1,0 +1,71 @@
+shared:
+  input:
+    # [Required]
+    jfrogTokenIntegration: jf_token
+
+artifactCleanup:
+  metadata:
+    # [Required]
+    pipelineName: km_test_artifact_cleanup
+
+    # [Optional] Default value: artifact_cleanup_property_bag
+    propertyBagResourceName: artifact_cleanup_property_bag
+
+    # [Optional] Default value: artifact_cleanup_cron_trigger
+    cronTriggerResourceName: artifact_cleanup_cron_trigger
+
+  controls:
+    # [Optional] When defined with enabled: true then new Cron will be setup. Default expression: 0 0 5 ? * 1
+    cron:
+      enabled: false
+      expression: "*/3 * * * *"
+
+    # [Optional] List of comma separated Artifactory repo names for which jfrogTokenIntegration is provided.
+    # Useful when using the pipeline with Cron.
+    repos: "plugin-repo-1"
+
+    # [Optional] Defaults to true, if not provided
+    dryRun: "true"
+
+    # [Optional] Defaults to 1000, if not provided
+    paceTimeMS: 1000
+
+    # [Optional] Defaults to 10, if not provided
+    maxRepos: 10
+
+    # [Optional] Defaults to 10, if not provided
+    maxArtifacts: 100
+
+
+dockerCleanup:
+  metadata:
+    # [Required]
+    pipelineName: km_test_docker_cleanup
+
+    # [Optional] Default value: docker_cleanup_property_bag
+    propertyBagResourceName: docker_cleanup_property_bag
+
+    # [Optional] Default value: docker_cleanup_cron_trigger
+    cronTriggerResourceName: docker_cleanup_cron_trigger
+
+  controls:
+    # [Optional] When defined with enabled: true then new Cron will be setup. Default expression: 0 0 5 ? * 1
+    cron:
+      enabled: false
+      expression: "*/3 * * * *"
+
+    # [Optional] List of comma separated Artifactory Docker repo names for which jfrogTokenIntegration is provided.
+    # Useful when using the pipeline with Cron.
+    repos: "km-docker-local"
+
+    # [Optional] Defaults to true, if not provided
+    dryRun: "false"
+
+    # [Optional] Defaults to 1000, if not provided
+    paceTimeMS: 1000
+
+    # [Optional] Defaults to 10, if not provided
+    maxRepos: 10
+
+    # [Optional] Defaults to 10, if not provided
+    maxArtifacts: 100
