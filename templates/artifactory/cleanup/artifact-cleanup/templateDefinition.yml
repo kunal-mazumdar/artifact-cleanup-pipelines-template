@@ -55,7 +55,7 @@ __globals:
         }
         function configure_artifactory() {
           echo '===== CONFIGURING ARTIFACTORY ====='
-          jf c add --artifactory-url ${int_{{ .Values.shared.input.jfrogTokenIntegration }}_url} --access-token ${int_{{ .Values.shared.input.jfrogTokenIntegration }}_accessToken}
+          jf c add --url ${int_{{ .Values.shared.input.jfrogTokenIntegration }}_url} --access-token ${int_{{ .Values.shared.input.jfrogTokenIntegration }}_accessToken}
           isArtifactoryOnline=$(jf rt ping)                
           if [[ $isArtifactoryOnline != 'OK' ]]; then
             echo 'Please check access token!'
