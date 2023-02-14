@@ -22,7 +22,7 @@ artifactCleanup:
 
     # [Optional] List of comma separated Artifactory repo names for which jfrogTokenIntegration is provided.
     # Useful when using the pipeline with Cron.
-    repos: "plugin-repo-1"
+    repos: ""
 
     # [Optional] Defaults to true, if not provided
     dryRun: "true"
@@ -56,10 +56,10 @@ dockerCleanup:
 
     # [Optional] List of comma separated Artifactory Docker repo names for which jfrogTokenIntegration is provided.
     # Useful when using the pipeline with Cron.
-    repos: "km-docker-local"
+    repos: ""
 
     # [Optional] Defaults to true, if not provided
-    dryRun: "false"
+    dryRun: "true"
 
     # [Optional] Defaults to 1000, if not provided
     paceTimeMS: 1000
