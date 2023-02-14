@@ -193,11 +193,7 @@ pipelines:
               }
             - search
             - cleanup
-          onComplete:
-            - |
-              if test -f "./report.csv"; then
-                add_cache_files report.csv report.csv
-              fi
+          onComplete: *onComplete
 
   - name: {{ .Values.dockerCleanup.metadata.pipelineName }}
     configuration:
@@ -246,58 +242,7 @@ pipelines:
           environmentVariables:
             INTERNAL_PROPERTY_BAG_RESOURCE_NAME: *dockerCleanupPropertyBagName
         execution:
-          onStart:
-            - |
-              function validate_repos() {
-                echo '===== VALIDATING INPUT REPOS ====='
-                if [[ -z "${repos}" ]]; then
-                  echo 'Please provide at least one repo to proceed!'
-                  exit 1
-                fi
-              }
-              function validate_time_interval() {
-                echo '===== VALIDATING INPUT TIME INTERVAL ====='
-                if [ "${timeInterval}" -le 0 ]; then
-                  echo 'timeInterval variable must have value 1 or more'
-                  exit 1
-                fi
-              }
-              function validate_pace_time() {
-                echo '===== VALIDATING INPUT PACE TIME ====='
-                if [ "${paceTimeMS}" -lt 1000 ]; then
-                  echo 'paceTimeMS variable must have value 1000 or more'
-                  exit 1
-                fi
-              }
-              function validate_max_repos() {
-                echo '===== VALIDATING INPUT MAX REPOS ====='
-                if [ "${maxRepos}" -le 0 ]; then
-                  echo 'maxRepos variable must have value 1 or more'
-                  exit 1
-                fi
-              }
-              function validate_max_artifacts() {
-                echo '===== VALIDATING INPUT MAX ARTIFACTS ====='
-                if [ "${maxArtifacts}" -le 0 ]; then
-                  echo 'maxArtifacts variable must have value 1 or more'
-                  exit 1
-                fi
-              }
-              function configure_artifactory() {
-                echo '===== CONFIGURING ARTIFACTORY ====='
-                jf c add --url ${int_{{ .Values.shared.input.jfrogTokenIntegration }}_url} --access-token ${int_{{ .Values.shared.input.jfrogTokenIntegration }}_accessToken}
-                isArtifactoryOnline=$(jf rt ping)                
-                if [[ $isArtifactoryOnline != 'OK' ]]; then
-                  echo 'Please check access token!'
-                  exit 1
-                fi
-              }
-            - validate_repos
-            - validate_time_interval
-            - validate_pace_time
-            - validate_max_repos
-            - validate_max_artifacts
-            - configure_artifactory
+          onStart: *onStart
           onExecute:
             - |
               function search() {                
@@ -340,8 +285,4 @@ pipelines:
               }
             - search
             - cleanup
-          onComplete:
-            - |
-              if test -f "./report.csv"; then
-                add_cache_files report.csv report.csv
-              fi
+          onComplete: *onComplete
