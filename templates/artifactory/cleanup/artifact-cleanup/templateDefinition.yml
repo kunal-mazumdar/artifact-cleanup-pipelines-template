@@ -94,25 +94,16 @@ resources:
 {{ end }}
 
 {{ if eq true .Values.dockerCleanup.controls.cron.enabled }}
-- name: *dockerCleanupCronTriggerName
-  type: CronTrigger
-  configuration:
-    interval: "{{ default "0 0 5 ? * 1" .Values.dockerCleanup.controls.cron.expression }}"
+  - name: *dockerCleanupCronTriggerName
+    type: CronTrigger
+    configuration:
+      interval: "{{ default "0 0 5 ? * 1" .Values.dockerCleanup.controls.cron.expression }}"
 {{ end }}
 
 pipelines:
   - name: {{ .Values.artifactCleanup.metadata.pipelineName }}
     configuration:
-      runtime:
-        type: image
-        image:
-          auto:
-            language: 'node'
-            versions:
-              - '16'
-      jfrogCliVersion: '2'
-      integrations:
-        - name: {{ .Values.shared.input.jfrogTokenIntegration }}
+      <<: *configuration
       environmentVariables:
         readOnly:
           timeUnit:
@@ -258,16 +249,7 @@ pipelines:
 
   - name: {{ .Values.dockerCleanup.metadata.pipelineName }}
     configuration:
-      runtime:
-        type: image
-        image:
-          auto:
-            language: 'node'
-            versions:
-              - '16'
-      jfrogCliVersion: '2'
-      integrations:
-        - name: {{ .Values.shared.input.jfrogTokenIntegration }}
+      <<: *configuration
       environmentVariables:
         readOnly:
           timeUnit:
